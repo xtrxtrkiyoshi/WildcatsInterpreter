@@ -1,0 +1,12 @@
+/home/hysteria/Desktop/sample124/sample124/obj/x86/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/hysteria/Desktop/sample124/sample124/obj/x86/Debug/sample124.gtk-gui.gui.stetic
+/home/hysteria/Desktop/sample124/sample124/bin/Debug/sample124.pdb
+/home/hysteria/Desktop/sample124/sample124/bin/Debug/sample124.exe
+/home/hysteria/Desktop/sample124/sample124/obj/x86/Debug/sample124.exe
+/home/hysteria/Desktop/sample124/sample124/obj/x86/Debug/sample124.pdb
+/home/shortcake/Desktop/sample124/sample124/obj/x86/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/shortcake/Desktop/sample124/sample124/obj/x86/Debug/sample124.gtk-gui.gui.stetic
+/home/shortcake/Desktop/sample124/sample124/bin/Debug/sample124.pdb
+/home/shortcake/Desktop/sample124/sample124/bin/Debug/sample124.exe
+/home/shortcake/Desktop/sample124/sample124/obj/x86/Debug/sample124.exe
+/home/shortcake/Desktop/sample124/sample124/obj/x86/Debug/sample124.pdb
