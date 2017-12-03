@@ -29,13 +29,14 @@
 /home/aikee/Desktop/well/sample124base/sample124/bin/Debug/sample124.pdb
 /home/aikee/Desktop/well/sample124base/sample124/bin/Debug/sample124.exe
 <<<<<<< HEAD
+=======
+>>>>>>> kevin
 /home/hysteria/Downloads/sample124base/sample124/obj/x86/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
 /home/hysteria/Downloads/sample124base/sample124/obj/x86/Debug/sample124.gtk-gui.gui.stetic
 /home/hysteria/Downloads/sample124base/sample124/bin/Debug/sample124.pdb
 /home/hysteria/Downloads/sample124base/sample124/bin/Debug/sample124.exe
 /home/hysteria/Downloads/sample124base/sample124/obj/x86/Debug/sample124.exe
 /home/hysteria/Downloads/sample124base/sample124/obj/x86/Debug/sample124.pdb
-=======
 /home/shortcake/Downloads/124/sample124baseERIKA/sample124/obj/x86/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
 /home/shortcake/Downloads/124/sample124baseERIKA/sample124/obj/x86/Debug/sample124.gtk-gui.gui.stetic
 /home/shortcake/Downloads/124/sample124baseERIKA/sample124/obj/x86/Debug/sample124.exe
@@ -55,15 +56,45 @@
 /home/shortcake/Videos/124/ERIKA/sample124/bin/Debug/sample124.exe
 /home/shortcake/Videos/124/ERIKA/sample124/obj/x86/Debug/sample124.exe
 /home/shortcake/Videos/124/ERIKA/sample124/obj/x86/Debug/sample124.pdb
-/home/aikee/Desktop/ERIKA/sample124/obj/x86/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
-/home/aikee/Desktop/ERIKA/sample124/obj/x86/Debug/sample124.gtk-gui.gui.stetic
-/home/aikee/Desktop/ERIKA/sample124/obj/x86/Debug/sample124.exe
-/home/aikee/Desktop/ERIKA/sample124/obj/x86/Debug/sample124.pdb
-/home/aikee/Desktop/ERIKA/sample124/bin/Debug/sample124.pdb
-/home/aikee/Desktop/ERIKA/sample124/bin/Debug/sample124.exe
-/home/aikee/Desktop/LYKA/sample124/obj/x86/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
-/home/aikee/Desktop/LYKA/sample124/obj/x86/Debug/sample124.gtk-gui.gui.stetic
-/home/aikee/Desktop/LYKA/sample124/bin/Debug/sample124.pdb
-/home/aikee/Desktop/LYKA/sample124/bin/Debug/sample124.exe
-/home/aikee/Desktop/LYKA/sample124/obj/x86/Debug/sample124.exe
-/home/aikee/Desktop/LYKA/sample124/obj/x86/Debug/sample124.pdb
+/home/shortcake/Videos/124/KEVIN/sample124/obj/x86/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/shortcake/Videos/124/KEVIN/sample124/obj/x86/Debug/sample124.gtk-gui.gui.stetic
+/home/shortcake/Videos/124/KEVIN/sample124/bin/Debug/sample124.pdb
+/home/shortcake/Videos/124/KEVIN/sample124/bin/Debug/sample124.exe
+/home/shortcake/Videos/124/KEVIN/sample124/obj/x86/Debug/sample124.exe
+/home/shortcake/Videos/124/KEVIN/sample124/obj/x86/Debug/sample124.pdb
+/home/shortcake/Videos/124/LYKA/sample124/obj/x86/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/shortcake/Videos/124/LYKA/sample124/obj/x86/Debug/sample124.gtk-gui.gui.stetic
+/home/shortcake/Videos/124/LYKA/sample124/bin/Debug/sample124.pdb
+/home/shortcake/Videos/124/LYKA/sample124/bin/Debug/sample124.exe
+/home/shortcake/Videos/124/LYKA/sample124/obj/x86/Debug/sample124.exe
+/home/shortcake/Videos/124/LYKA/sample124/obj/x86/Debug/sample124.pdb
+/home/shortcake/Videos/124/BASE/sample124/obj/x86/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/shortcake/Videos/124/BASE/sample124/obj/x86/Debug/sample124.gtk-gui.gui.stetic
+/home/shortcake/Videos/124/BASE/sample124/bin/Debug/sample124.pdb
+/home/shortcake/Videos/124/BASE/sample124/bin/Debug/sample124.exe
+/home/shortcake/Videos/124/BASE/sample124/obj/x86/Debug/sample124.exe
+/home/shortcake/Videos/124/BASE/sample124/obj/x86/Debug/sample124.pdb
+/home/hysteria/Downloads/temp/ERIKA/sample124/obj/x86/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/hysteria/Downloads/temp/ERIKA/sample124/obj/x86/Debug/sample124.gtk-gui.gui.stetic
+/home/hysteria/Downloads/temp/ERIKA/sample124/bin/Debug/sample124.pdb
+/home/hysteria/Downloads/temp/ERIKA/sample124/bin/Debug/sample124.exe
+/home/hysteria/Downloads/temp/ERIKA/sample124/obj/x86/Debug/sample124.exe
+/home/hysteria/Downloads/temp/ERIKA/sample124/obj/x86/Debug/sample124.pdb
+/home/aikee/Desktop/ito na/sample124/obj/x86/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/aikee/Desktop/ito na/sample124/obj/x86/Debug/sample124.gtk-gui.gui.stetic
+/home/aikee/Desktop/ito na/sample124/bin/Debug/sample124.pdb
+/home/aikee/Desktop/ito na/sample124/bin/Debug/sample124.exe
+/home/aikee/Desktop/ito na/sample124/obj/x86/Debug/sample124.exe
+/home/aikee/Desktop/ito na/sample124/obj/x86/Debug/sample124.pdb
+/home/hysteria/Downloads/temp/ito na/sample124/obj/x86/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/hysteria/Downloads/temp/ito na/sample124/obj/x86/Debug/sample124.gtk-gui.gui.stetic
+/home/hysteria/Downloads/temp/ito na/sample124/bin/Debug/sample124.pdb
+/home/hysteria/Downloads/temp/ito na/sample124/bin/Debug/sample124.exe
+/home/hysteria/Downloads/temp/ito na/sample124/obj/x86/Debug/sample124.exe
+/home/hysteria/Downloads/temp/ito na/sample124/obj/x86/Debug/sample124.pdb
+/home/aikee/Desktop/124/ito na/sample124/obj/x86/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/aikee/Desktop/124/ito na/sample124/obj/x86/Debug/sample124.gtk-gui.gui.stetic
+/home/aikee/Desktop/124/ito na/sample124/bin/Debug/sample124.pdb
+/home/aikee/Desktop/124/ito na/sample124/bin/Debug/sample124.exe
+/home/aikee/Desktop/124/ito na/sample124/obj/x86/Debug/sample124.exe
+/home/aikee/Desktop/124/ito na/sample124/obj/x86/Debug/sample124.pdb

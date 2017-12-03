@@ -73,6 +73,7 @@
     <Compile Include="ExpectationTable.cs" />
     <Compile Include="Symbol.cs" />
     <Compile Include="InputBox.cs" />
+    <Compile Include="Matcher.cs" />
     <Compile Include="IT.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

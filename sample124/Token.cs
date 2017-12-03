@@ -6,6 +6,7 @@ namespace sample124
 	{
 		private string lexeme;
 		private string type;
+		private bool isExecuted;
 
 		public Token (string lexeme, string type)
 		{

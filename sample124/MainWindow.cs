@@ -4,16 +4,16 @@ using System.Text.RegularExpressions;
 using System.IO;
 using System.Collections;
 using sample124;
-using Microsoft.VisualBasic;
+//using Microsoft.VisualBasic;
 
 public partial class MainWindow: Gtk.Window
 {
 	static ArrayList tokens;
 	static ArrayList symboltable;
-//--- FROM THIS LINE
+	//--- FROM THIS LINE
 	static ArrayList pseudo = new ArrayList();
 	static IT it = new IT(); //tempting gawing IT pennywise buuuut
-//--- TO THIS LINE
+	//--- TO THIS LINE
 	public MainWindow () : base (Gtk.WindowType.Toplevel)
 	{
 		Build ();
@@ -65,6 +65,8 @@ public partial class MainWindow: Gtk.Window
 
 		tokens = new ArrayList ();
 
+
+
 		string line;
 		textview7.Buffer.Text = "";
 		textview8.Buffer.Text = "";
@@ -85,7 +87,7 @@ public partial class MainWindow: Gtk.Window
 		int lexererror = 0;
 		int oicneeded = 0;
 		int insideorly = 0;
-//--- FROM THIS LINE
+		//--- FROM THIS LINE
 		int insidewtf = 0;
 		int mustyarly = 0;
 		int stringerror = 0;
@@ -99,7 +101,7 @@ public partial class MainWindow: Gtk.Window
 		string omgerror = "";
 		string condition = "";
 		string nowai = "";
-//--- TO THIS LINE
+		//--- TO THIS LINE
 		Regex rgx = new Regex(@"^(SUM|DIFF|PRODUKT|QUSHUNT|BIGGR|SMALLR|BOTH|EITHER|WON|ANY|ALL|O|YA|NO|MOD)$");
 		Regex rgx2 = new Regex(@"^(I|IM|IS)$");
 		Regex rgx3 = new Regex(@"^(BTW)$");
@@ -109,7 +111,6 @@ public partial class MainWindow: Gtk.Window
 		while((line = file.ReadLine()) != null)
 		{
 
-//---- FROM THIS LINE
 			//IF ELSE statement
 			if (insideorly > 0) {
 				MatchCollection mc = Regex.Matches (line, @"YA RLY");
@@ -172,23 +173,60 @@ public partial class MainWindow: Gtk.Window
 			if(run == true || mustyarly == 1 || nowai != "" || omgline == true) {
 				nowai = "";
 				omgline = false;
-//--- TO THIS LINE
-				if(line.Equals("HAI", StringComparison.Ordinal)){ // If hai keyword is detected set inside to 1 which means that the following is now part of the program
-					inside = 1;
-					linenum++;
-					textview5.Buffer.Text += "HAI\n";
-					textview6.Buffer.Text += "CODE START\n";
-					tokens.Add (new Token("HAI", "CODE START"));
-					continue;
+				string[] templine = line.Split (default(string[]), StringSplitOptions.RemoveEmptyEntries); //UPDATE include ALL IN THE BLOCK
+				if(templine.Length > 0 && inside == 0){ // If hai keyword is detected set inside to 1 which means that the following is now part of the program
+					if(templine[0].Equals("HAI", StringComparison.Ordinal)){
+						if (templine.Length > 1) {
+							if (!(templine [1].Equals ("BTW", StringComparison.Ordinal))) {
+								textview4.Buffer.Text += ("Syntax Error Detected at Line " + linenum + "\n");
+								break;
+							} else {
+								textview5.Buffer.Text += "HAI\n";
+								textview6.Buffer.Text += "CODE START\n";
+								tokens.Add (new Token("HAI", "CODE START"));
+								textview5.Buffer.Text += "BTW\n";
+								textview6.Buffer.Text += "SINGLLE LINE COMMENT KEYWORD\n";
+								tokens.Add (new Token ("BTW", "SINGLE LINE COMMENT KEYWORD"));
+							}
+						} 
+						else {
+							textview5.Buffer.Text += "HAI\n";
+							textview6.Buffer.Text += "CODE START\n";
+							tokens.Add (new Token("HAI", "CODE START"));
+						}
+						inside = 1;
+						linenum++;
+						continue;
+					}
+
 
 				}
-				else if(line.Equals("KTHXBYE", StringComparison.Ordinal)){ // if kthxbye is detected then sets inside to 0 which means that the analysis of the code should stop except fot BTW
-					inside = 0;
-					textview5.Buffer.Text += "KTHXBYE\n";
-					textview6.Buffer.Text += "CODE END\n";
-					tokens.Add (new Token("KTHXBYE", "CODE END"));
-					continue;
+				else if(templine.Length > 0 && inside == 1){ // if kthxbye is detected then sets inside to 0 which means that the analysis of the code should stop except fot BTW
+					if(templine[0].Equals("KTHXBYE", StringComparison.Ordinal)){ //UPATE ALL IN THE BLOCK
+						if (templine.Length > 1) {
+							if (!(templine [1].Equals ("BTW", StringComparison.Ordinal))) {
+								textview4.Buffer.Text += ("Syntax Error Detected at Line " + linenum + "\n");
+								break;
+							} else {
+								textview5.Buffer.Text += "KTHXBYE\n";
+								textview6.Buffer.Text += "CODE END\n";
+								tokens.Add (new Token("KTHXBYE", "CODE END"));
+								textview5.Buffer.Text += "BTW\n";
+								textview6.Buffer.Text += "SINGLLE LINE COMMENT KEYWORD\n";
+								tokens.Add (new Token ("BTW", "SINGLE LINE COMMENT KEYWORD"));
+							}
+						} 
+						else {
+							textview5.Buffer.Text += "KTHXBYE\n";
+							textview6.Buffer.Text += "CODE END\n";
+							tokens.Add (new Token("KTHXBYE", "CODE END"));
+						}
+						inside = 0;
+						continue;
+					}
+
 				}
+
 
 				MatchCollection mc = Regex.Matches(line, @"BTW\b");
 				foreach (Match m in mc){
@@ -201,6 +239,11 @@ public partial class MainWindow: Gtk.Window
 					textview5.Buffer.Text += "BTW\n";
 					textview6.Buffer.Text += "SINGLLE LINE COMMENT KEYWORD\n";
 					tokens.Add (new Token("BTW", "SINGLE LINE COMMENT KEYWORD"));
+				}
+				else if(line.Length > 0 && inside == 0){
+					textview4.Buffer.Text += "Exception Detected Expecting HAI\n";
+					syntaxerror = 1;
+					break;
 				}
 
 				if (!(line.Equals ("", StringComparison.Ordinal)) && inside == 1 && comment == 0) { // lexer and the parser is inside this block of code
@@ -274,14 +317,16 @@ public partial class MainWindow: Gtk.Window
 
 						lexercurrentword++;
 					}
-//--- THIS LINE
+
 					syntaxerror = syntaxchecker(line, ref oicneeded, ref insideorly, ref insidewtf, ref  mustyarly, ref symboltablesize, ref run, ref condition); // this the call for the syntax analyzer
-//--- TO THIS LINE
+
 				}
 				if (lexererror == 1) {
 					break;
 				}
 				if(syntaxerror == 1 || omgerror != ""){
+					Console.WriteLine (syntaxerror);
+					Console.WriteLine (omgerror);
 					textview4.Buffer.Text += ("Syntax Error Detected at Line " + linenum + "\n");
 					break;
 				}
@@ -290,35 +335,71 @@ public partial class MainWindow: Gtk.Window
 				linenum++;
 
 			}
-//--- THIS LINE		
+
 			//sets IT for Boolean and Comparison
 			if(condition != "") {
 				BooleanComparison(condition);
 				condition = ""; //resets condition
 			}
-//--- TO THIS LINE				
 
 		}
-
 		if (oicneeded == 1) {
 			textview4.Buffer.Text += "Exception Detected Expecting OIC\n";
-		} else if (mustyarly == 1) {
+		}
+		else if (mustyarly == 1) {
 			textview4.Buffer.Text += "Exception Detected Expecting YA RLY\n";
-		} else if(syntaxerror == 0 && lexererror == 0) {
+		}
+		else if (inside == 1 && syntaxerror == 0 && lexererror == 0) {
+			textview4.Buffer.Text += "Exception Detected Expecting KTHXBYE\n";
+		}
+		else if(syntaxerror == 0 && lexererror == 0) {
 			if (InitializeSymbolTable ()) {
 				TypeChecker (textview4);
 				AssignmentExecution ();
 				IOExecution ();
+//				Execute ();
 				RenderSymbolTable();
 			}
 		}
 		file.Close ();
 	}
+		
+	public void Execute() {
+		// @TODO: merge AssignmentExecution and IOExecution under this function
+		for(int i = 0; i < tokens.Count; i++) {
+			Token currentToken = (Token)tokens [i];
+
+			// if token is arithmetic AND not part of other statements
+			if (Matcher.IsArithmeticOperation (currentToken.getLexeme ())) {
+				// @TODO: handle floats
+				int result = NumExecution(i - 1);
+				Console.WriteLine (result);
+
+				symboltable.Add (new Symbol ("IT", result.ToString (), "NUMBR" )); //, nextToken.getType(), "1"
+
+			}
+
+			// put all other statements here!
+		}
+	}
+
+	public void updateSymbol(string identifier, string type, string value) {
+		foreach(Symbol symbol in symboltable) {
+			if (symbol.GetIdentifier () == identifier) {
+				symbol.SetType (type);
+				symbol.SetValue (value);
+
+				return;
+			}
+		}
+	}
+// GET ALL FROM HERE ========================================================================================================================================================================
 
 	public Boolean InitializeSymbolTable() {
 		float flt;
 		int num;
-		string stringVal;
+		string stringVal = "";
+		Regex numbar = new Regex(@"^-?\d*\.\d+$");
 		for (int i = 0; i < tokens.Count; i++) {
 			Token token = (Token)tokens [i];
 			// search for all declarations
@@ -335,11 +416,12 @@ public partial class MainWindow: Gtk.Window
 
 				Token itzToken = (Token)tokens [i + 2];
 
-				string dataType;
+				string dataType= "";
 
 				//ITZ SUM OF 1 AN 1
 				//  2   3    4  5  6
-
+				// ITZ SUM OF "1" AN "1"
+				// 2    3     456  7 8910
 				if (itzToken.getType () == "ITZ KEYWORD") {
 					Token afterItzToken = (Token)tokens [i + 3];
 
@@ -359,18 +441,140 @@ public partial class MainWindow: Gtk.Window
 					} else { //else like arithmetic operation
 						Token firstToken = (Token)tokens [i + 4];
 						Token secondToken = (Token)tokens [i + 6];
-						Console.WriteLine (firstToken.getType());
-						Console.WriteLine (secondToken.getType());
-						if (firstToken.getType () == "DECIMAL LITERAL" || secondToken.getType () == "DECIMAL LITERAL") {
-							Console.WriteLine ("=======================================");
-							dataType = "NUMBAR";
-							flt = FloatExecution (i + 2);
-							stringVal = Convert.ToString (flt);
-						} else {
-							dataType = "NUMBR";
-							num = NumExecution (i + 2);
-							stringVal = Convert.ToString (num);
 
+						if (firstToken.getType () == "DECIMAL LITERAL" || secondToken.getType () == "DECIMAL LITERAL") {
+							dataType = "NUMBAR";
+							flt = FloatExecution(i + 2);
+							stringVal = Convert.ToString(flt);
+						} else if(firstToken.getType() == "STRING DELIMITER" || secondToken.getType() == "STRING DELIMITER"){
+							Token firstYarnToken = (Token)tokens [i+5];
+							Token secondYarnToken = (Token)tokens [i+9];
+							Console.WriteLine (secondYarnToken.getLexeme());
+							Console.WriteLine (firstYarnToken.getLexeme());
+							if (numbar.IsMatch (secondYarnToken.getLexeme ()) == true || numbar.IsMatch (firstYarnToken.getLexeme ()) == true) {
+								dataType = "NUMBAR";
+								flt = FloatExecution (i + 2);
+								stringVal = Convert.ToString (flt);
+							} else {
+								dataType = "NUMBR";
+								num = NumExecution (i + 2);
+								stringVal = Convert.ToString (num);
+							}
+
+						}else{
+							for (int j = 0; j < symboltable.Count; j++) {
+								Symbol symbol = (Symbol)symboltable [j];
+								if(symbol.GetIdentifier() == firstToken.getLexeme()){
+									Console.WriteLine (symbol.GetType ());
+									if (symbol.GetType () == "NUMBAR") {
+										dataType = "NUMBAR";
+										flt = FloatExecution (i + 2);
+										stringVal = Convert.ToString (flt);
+									} else if (symbol.GetType () == "NUMBR") {
+										if (secondToken.getType () == "IDENTIFIER") {
+											for (int k = 0; k < symboltable.Count; k++) {
+												Symbol symbol2 = (Symbol)symboltable [k];
+												if (symbol2.GetIdentifier () == secondToken.getLexeme ()) {
+													Console.WriteLine (symbol2.GetType ());
+													if (symbol2.GetType () == "NUMBAR") {
+														dataType = "NUMBAR";
+														flt = FloatExecution (i + 2);
+														stringVal = Convert.ToString (flt);
+													} else if(symbol2.GetType () == "NUMBR"){
+														dataType = "NUMBR";
+														num = NumExecution (i + 2);
+														stringVal = Convert.ToString (num);
+													}else{
+														if (numbar.IsMatch (symbol2.GetValue() ) == true) {
+															dataType = "NUMBAR";
+															flt = FloatExecution (i + 2);
+															stringVal = Convert.ToString (flt);
+														}else{
+															dataType = "NUMBR";
+															num = NumExecution (i + 2);
+															stringVal = Convert.ToString (num);
+														}
+													}
+												}
+											}
+										} else if (secondToken.getType () == "DECIMAL LITERAL") {
+											dataType = "NUMBAR";
+											flt = FloatExecution (i + 2);
+											stringVal = Convert.ToString (flt);
+										} else if (secondToken.getType () == "STRING DELIMITER") {
+											Token secondYarnToken = (Token)tokens [i + 7];
+											if (numbar.IsMatch (secondYarnToken.getLexeme ()) == true) {
+												dataType = "NUMBAR";
+												flt = FloatExecution (i + 2);
+												stringVal = Convert.ToString (flt);
+											} else {
+												dataType = "NUMBR";
+												num = NumExecution (i + 2);
+												stringVal = Convert.ToString (num);
+											}
+										} else {
+											dataType = "NUMBR";
+											num = NumExecution (i + 2);
+											stringVal = Convert.ToString (num);
+										}
+									} else { // IT A FUCKING YARN JEEZ
+										if (numbar.IsMatch (symbol.GetValue() ) == true) {
+											dataType = "NUMBAR";
+											flt = FloatExecution (i + 2);
+											stringVal = Convert.ToString (flt);
+										} else {
+											Console.WriteLine (secondToken.getType ());
+											if (secondToken.getType () == "IDENTIFIER") {
+												for (int k = 0; k < symboltable.Count; k++) {
+													Symbol symbol2 = (Symbol)symboltable [k];
+													if (symbol2.GetIdentifier () == secondToken.getLexeme ()) {
+														Console.WriteLine ("YO " +symbol2.GetType ());
+														if (symbol2.GetType () == "NUMBAR") {
+															dataType = "NUMBAR";
+															flt = FloatExecution (i + 2);
+															stringVal = Convert.ToString (flt);
+														} else if(symbol2.GetType () == "NUMBR") {
+															dataType = "NUMBR";
+															num = NumExecution (i + 2);
+															stringVal = Convert.ToString (num);
+														}else{
+															if (numbar.IsMatch (symbol2.GetValue() ) == true) {
+																dataType = "NUMBAR";
+																flt = FloatExecution (i + 2);
+																stringVal = Convert.ToString (flt);
+															}else{
+																dataType = "NUMBR";
+																num = NumExecution (i + 2);
+																stringVal = Convert.ToString (num);
+															}
+														}
+													}
+												}
+											} else if (secondToken.getType () == "DECIMAL LITERAL") {
+												dataType = "NUMBAR";
+												flt = FloatExecution (i + 2);
+												stringVal = Convert.ToString (flt);
+											} else if (secondToken.getType () == "STRING DELIMITER") {
+												Token secondYarnToken = (Token)tokens [i + 7];
+												if (numbar.IsMatch (secondYarnToken.getLexeme ()) == true) {
+													dataType = "NUMBAR";
+													flt = FloatExecution (i + 2);
+													stringVal = Convert.ToString (flt);
+												} else {
+													dataType = "NUMBR";
+													num = NumExecution (i + 2);
+													stringVal = Convert.ToString (num);
+												}
+											} else {
+												dataType = "NUMBR";
+												num = NumExecution (i + 2);
+												stringVal = Convert.ToString (num);
+											}
+										}
+
+									}
+								}
+							}
 						}
 					}
 					symboltable.Add (new Symbol (nextToken.getLexeme (), stringVal, dataType));
@@ -394,54 +598,20 @@ public partial class MainWindow: Gtk.Window
 			textview9.Buffer.Text += (symbol.GetValue()) + "\n";
 		}
 	}
-// IMPORTANT ======================================================================================================================================================================================
-	public int ArithmeticEvaluation(int index){
-		int num = 0;
-		int firstIndex = firstParam(index);
-		int secondIndex = secondParam(index);
-		for (int i = index + 1; i < tokens.Count; i++) {
-			Token token = (Token)tokens [i];
-			if (token.getType () == "ADDITION OPERATOR"){
-				num = ArithmeticEvaluation(firstIndex) + ArithmeticEvaluation(secondIndex);
-				return num;
-			}else if (token.getType() == "INTEGER LITERAL"){
-				num = Int32.Parse(token.getLexeme ()); //num 1 = var.getValue
-				return num;
-			}
-		}
-		return num;
-	}
-
-	public int firstParam(int index){
-		return index + 1;
-	}
-
-	public int secondParam(int index){
-		int expectedParams = 2;
-		string add = "ADDITION OPERATOR";
-
-		for (int i = index; i < tokens.Count; i++) {
-			Token token = (Token)tokens [i];
-			if (token.getType () == add) {
-				expectedParams += 1;
-			} else {
-				-- expectedParams;
-			}
-		}
-		return expectedParams;
-	}
-// IMPORTANT ======================================================================================================================================================================================
 	public void AssignmentExecution(){
-		string stringVal;
+		string stringVal = "";
 		float flt;
 		int num;
+		Regex numbar = new Regex(@"^-?\d*\.\d+$");
 		for (int i = 0; i < tokens.Count; i++) {
 			Token token = (Token)tokens [i];
 
 			// noot R SUM OF 1 AN 1
 			// -1   i  1     2  3 4
+			//noot R SUM OF "1" AN "1"
+			// -1  i  1     234  5 678
 			if (token.getType () == "ASSIGNMENT OPERATOR") {
-				string dataType;
+				string dataType = "";
 				Token nextToken = (Token)tokens [i + 1];
 				Token prevToken = (Token)tokens [i - 1];
 
@@ -461,15 +631,136 @@ public partial class MainWindow: Gtk.Window
 				}else { //if arithmetic operation
 					Token firstToken = (Token)tokens [i + 2];
 					Token secondToken = (Token)tokens [i + 4];
+
 					if (firstToken.getType () == "DECIMAL LITERAL" || secondToken.getType () == "DECIMAL LITERAL") {
 						dataType = "NUMBAR";
 						flt = FloatExecution(i);
 						stringVal = Convert.ToString(flt);
-					} else {
-						dataType = "NUMBR";
-						num = NumExecution(i);
-						stringVal = Convert.ToString(num);
+					} else if(firstToken.getType() == "STRING DELIMITER" || secondToken.getType() == "STRING DELIMITER"){
+						Token firstYarnToken = (Token)tokens [i+3];
+						Token secondYarnToken = (Token)tokens [i+7];
+						if (numbar.IsMatch(secondYarnToken.getLexeme()) == true || numbar.IsMatch(firstYarnToken.getLexeme ()) == true) {
+							dataType = "NUMBAR";
+							flt = FloatExecution (i);
+							stringVal = Convert.ToString (flt);
+						}else {
+							dataType = "NUMBR";
+							num = NumExecution (i);
+							stringVal = Convert.ToString (num);
+						}
 
+
+					}else{
+						for (int j = 0; j < symboltable.Count; j++) {
+							Symbol symbol = (Symbol)symboltable [j];
+							if(symbol.GetIdentifier() == firstToken.getLexeme()){
+								if (symbol.GetType () == "NUMBAR") {
+									dataType = "NUMBAR";
+									flt = FloatExecution (i );
+									stringVal = Convert.ToString (flt);
+								} else if (symbol.GetType () == "NUMBR") {
+									if (secondToken.getType () == "IDENTIFIER") {
+										for (int k = 0; k < symboltable.Count; k++) {
+											Symbol symbol2 = (Symbol)symboltable [k];
+											if (symbol.GetIdentifier () == firstToken.getLexeme ()) {
+												if (symbol2.GetType () == "NUMBAR") {
+													dataType = "NUMBAR";
+													flt = FloatExecution (i);
+													stringVal = Convert.ToString (flt);
+												} else if(symbol2.GetType () == "NUMBR"){
+													dataType = "NUMBR";
+													num = NumExecution (i);
+													stringVal = Convert.ToString (num);
+												}else{
+													if (numbar.IsMatch (symbol2.GetValue() ) == true) {
+														dataType = "NUMBAR";
+														flt = FloatExecution (i);
+														stringVal = Convert.ToString (flt);
+													}else{
+														dataType = "NUMBR";
+														num = NumExecution (i);
+														stringVal = Convert.ToString (num);
+													}
+												}
+											}
+										}
+									} else if (secondToken.getType () == "DECIMAL LITERAL") {
+										dataType = "NUMBAR";
+										flt = FloatExecution (i);
+										stringVal = Convert.ToString (flt);
+									} else if (secondToken.getType () == "STRING DELIMITER") {
+										Token secondYarnToken = (Token)tokens [i + 7];
+										if (numbar.IsMatch (secondYarnToken.getLexeme ()) == true) {
+											dataType = "NUMBAR";
+											flt = FloatExecution (i);
+											stringVal = Convert.ToString (flt);
+										} else {
+											dataType = "NUMBR";
+											num = NumExecution (i);
+											stringVal = Convert.ToString (num);
+										}
+									} else {
+										dataType = "NUMBR";
+										num = NumExecution (i);
+										stringVal = Convert.ToString (num);
+									}
+								} else { // IT A FUCKING YARN JEEZ
+									if (numbar.IsMatch (symbol.GetValue() ) == true) {
+										dataType = "NUMBAR";
+										flt = FloatExecution (i);
+										stringVal = Convert.ToString (flt);
+									} else {
+										Console.WriteLine (secondToken.getType ());
+										if (secondToken.getType () == "IDENTIFIER") {
+											for (int k = 0; k < symboltable.Count; k++) {
+												Symbol symbol2 = (Symbol)symboltable [k];
+												if (symbol2.GetIdentifier () == secondToken.getLexeme ()) {
+													Console.WriteLine ("YO " +symbol2.GetType ());
+													if (symbol2.GetType () == "NUMBAR") {
+														dataType = "NUMBAR";
+														flt = FloatExecution (i);
+														stringVal = Convert.ToString (flt);
+													} else if(symbol2.GetType () == "NUMBR") {
+														dataType = "NUMBR";
+														num = NumExecution (i);
+														stringVal = Convert.ToString (num);
+													}else{
+														if (numbar.IsMatch (symbol2.GetValue() ) == true) {
+															dataType = "NUMBAR";
+															flt = FloatExecution (i);
+															stringVal = Convert.ToString (flt);
+														}else{
+															dataType = "NUMBR";
+															num = NumExecution (i);
+															stringVal = Convert.ToString (num);
+														}
+													}
+												}
+											}
+										} else if (secondToken.getType () == "DECIMAL LITERAL") {
+											dataType = "NUMBAR";
+											flt = FloatExecution (i);
+											stringVal = Convert.ToString (flt);
+										} else if (secondToken.getType () == "STRING DELIMITER") {
+											Token secondYarnToken = (Token)tokens [i + 7];
+											if (numbar.IsMatch (secondYarnToken.getLexeme ()) == true) {
+												dataType = "NUMBAR";
+												flt = FloatExecution (i);
+												stringVal = Convert.ToString (flt);
+											} else {
+												dataType = "NUMBR";
+												num = NumExecution (i);
+												stringVal = Convert.ToString (num);
+											}
+										} else {
+											dataType = "NUMBR";
+											num = NumExecution (i);
+											stringVal = Convert.ToString (num);
+										}
+									}
+								}
+							}
+						}
 					}
 				}
 				for (int j = 0; j < symboltable.Count; j++) {
@@ -510,27 +801,149 @@ public partial class MainWindow: Gtk.Window
 							textview4.Buffer.Text += (stringVal + "\n");
 						}
 					}
-				} else { //VISIBLE SUM OF 1 AN 1
+				} else { //VISIBLE SUM OF 1 AN 1 / VISIBLE SUM OF "1" AN "1"
+							//  i   1     2 3  4//      i   1    2 3 4 5 6 7 8
 					Token firstToken = (Token)tokens [i+2];
 					Token secondToken = (Token)tokens [i+4];
-					Console.WriteLine (firstToken.getType());
-					Console.WriteLine (secondToken.getType());
-						if (firstToken.getType () == "DECIMAL LITERAL" || secondToken.getType () == "DECIMAL LITERAL") {
-							flt = FloatExecution(i);
-							stringVal = Convert.ToString(flt);
+					if (firstToken.getType () == "DECIMAL LITERAL" || secondToken.getType () == "DECIMAL LITERAL") {
+						flt = FloatExecution(i);
+						stringVal = Convert.ToString(flt);
+						textview4.Buffer.Text += (flt + "\n");
+					} else if(firstToken.getType() == "STRING DELIMITER" || secondToken.getType() == "STRING DELIMITER"){
+						Token firstYarnToken = (Token)tokens [i+3];
+						Token secondYarnToken = (Token)tokens [i+7];
+
+						if (numbar.IsMatch(secondYarnToken.getLexeme()) == true || numbar.IsMatch(firstYarnToken.getLexeme ()) == true) {
+							flt = FloatExecution (i);
+							stringVal = Convert.ToString (flt);
 							textview4.Buffer.Text += (flt + "\n");
-						} else {
-							num = NumExecution(i);
-							stringVal = Convert.ToString(num);
+						}else {
+							num = NumExecution (i);
+							stringVal = Convert.ToString (num);
 							textview4.Buffer.Text += (num + "\n");
 						}
+					}else{
+						for (int j = 0; j < symboltable.Count; j++) {
+							Symbol symbol = (Symbol)symboltable [j];
+							if(symbol.GetIdentifier() == firstToken.getLexeme()){
+								if (symbol.GetType () == "NUMBAR") {
+									flt = FloatExecution (i + 2);
+									stringVal = Convert.ToString (flt);
+									textview4.Buffer.Text += (flt + "\n");
+								} else if (symbol.GetType () == "NUMBR") {
+									if (secondToken.getType () == "IDENTIFIER") {
+										for (int k = 0; k < symboltable.Count; k++) {
+											Symbol symbol2 = (Symbol)symboltable [k];
+											if (symbol.GetIdentifier () == firstToken.getLexeme ()) {
+												if (symbol2.GetType () == "NUMBAR") {
+													flt = FloatExecution (i + 2);
+													stringVal = Convert.ToString (flt);
+													textview4.Buffer.Text += (flt + "\n");
+												} else if(symbol2.GetType () == "NUMBR"){
+													num = NumExecution (i + 2);
+													stringVal = Convert.ToString (num);
+													textview4.Buffer.Text += (num + "\n");
+												}else{
+													if (numbar.IsMatch (symbol2.GetValue() ) == true) {
+														flt = FloatExecution (i + 2);
+														stringVal = Convert.ToString (flt);
+														textview4.Buffer.Text += (flt + "\n");
+													}else{
+														num = NumExecution (i + 2);
+														stringVal = Convert.ToString (num);
+														textview4.Buffer.Text += (num + "\n");
+													}
+												}
+											}
+										}
+									} else if (secondToken.getType () == "DECIMAL LITERAL") {
+										flt = FloatExecution (i + 2);
+										stringVal = Convert.ToString (flt);
+										textview4.Buffer.Text += (flt + "\n");
+									} else if (secondToken.getType () == "STRING DELIMITER") {
+										Token secondYarnToken = (Token)tokens [i + 7];
+										if (numbar.IsMatch (secondYarnToken.getLexeme ()) == true) {
+											flt = FloatExecution (i + 2);
+											stringVal = Convert.ToString (flt);
+											textview4.Buffer.Text += (flt + "\n");
+										} else {
+											num = NumExecution (i + 2);
+											stringVal = Convert.ToString (num);
+											textview4.Buffer.Text += (num + "\n");
+										}
+									} else {
+										num = NumExecution (i + 2);
+										stringVal = Convert.ToString (num);
+										textview4.Buffer.Text += (num + "\n");
+									}
+								} else { // IT A FUCKING YARN JEEZ
+									if (numbar.IsMatch (symbol.GetValue() ) == true) {
+										flt = FloatExecution (i + 2);
+										stringVal = Convert.ToString (flt);
+										textview4.Buffer.Text += (stringVal + "\n");
+									} else {
+										Console.WriteLine (secondToken.getType ());
+										if (secondToken.getType () == "IDENTIFIER") {
+											for (int k = 0; k < symboltable.Count; k++) {
+												Symbol symbol2 = (Symbol)symboltable [k];
+												if (symbol2.GetIdentifier () == secondToken.getLexeme ()) {
+													Console.WriteLine ("YO " +symbol2.GetType ());
+													if (symbol2.GetType () == "NUMBAR") {
+
+														flt = FloatExecution (i + 2);
+														stringVal = Convert.ToString (flt);
+														textview4.Buffer.Text += (stringVal + "\n");
+													} else if(symbol2.GetType () == "NUMBR") {
+														num = NumExecution (i + 2);
+														stringVal = Convert.ToString (num);
+														textview4.Buffer.Text += (stringVal + "\n");
+													}else{
+														if (numbar.IsMatch (symbol2.GetValue() ) == true) {
+
+															flt = FloatExecution (i + 2);
+															stringVal = Convert.ToString (flt);
+															textview4.Buffer.Text += (stringVal + "\n");
+														}else{
+															num = NumExecution (i + 2);
+															stringVal = Convert.ToString (num);
+															textview4.Buffer.Text += (stringVal + "\n");
+														}
+													}
+												}
+											}
+										} else if (secondToken.getType () == "DECIMAL LITERAL") {
+											flt = FloatExecution (i + 2);
+											stringVal = Convert.ToString (flt);
+											textview4.Buffer.Text += (stringVal + "\n");
+										} else if (secondToken.getType () == "STRING DELIMITER") {
+											Token secondYarnToken = (Token)tokens [i + 7];
+											if (numbar.IsMatch (secondYarnToken.getLexeme ()) == true) {
+												flt = FloatExecution (i + 2);
+												stringVal = Convert.ToString (flt);
+												textview4.Buffer.Text += (stringVal + "\n");
+											} else {
+												num = NumExecution (i + 2);
+												stringVal = Convert.ToString (num);
+												textview4.Buffer.Text += (stringVal + "\n");
+											}
+										} else {
+											num = NumExecution (i + 2);
+											stringVal = Convert.ToString (num);
+											textview4.Buffer.Text += (stringVal + "\n");
+										}
+									}
+
+								}
+							}
+						}
+					}
 				}
 			}else if (token.getType () == "SYSTEM INPUT KEYWORD") { // GIMMEH meep / GIMMEH
 				Token nextToken = (Token)tokens [i + 1];
 
 				//Console.WriteLine ("enter here: "); //terminal pa lang
-		//		stringVal = Interaction.InputBox("ENTER INPUT","GIMMEH","");
-				stringVal = "hoi";
+				//stringVal = Interaction.InputBox("ENTER INPUT","GIMMEH","");
+				stringVal ="";
 				//stringVal=Console.ReadLine ();
 				for (int j = 0; j < symboltable.Count; j++) {
 					Symbol symbol = (Symbol)symboltable [j];
@@ -563,70 +976,153 @@ public partial class MainWindow: Gtk.Window
 		string mul = "MULTIPLICATION OPERATOR";
 		string div = "DIVISION OPERATOR";
 		string mod = "MODULO OPERATOR";
+
 		for (i = index+ 1; i < tokens.Count; i++) { //check all tokens
 			Token token = (Token)tokens [i];
 			Token nextToken = (Token)tokens [i + 1];
-			Token yarnNextToken = (Token)tokens [i + 2];
 			Token secondToken = (Token)tokens [i + 3];
-			Token yarnSecondToken = (Token)tokens [i + 4];
 			if (token.getType () == add) {
 				if (nextToken.getType () == "STRING DELIMITER") {
+					Token yarnNextToken = (Token)tokens [i + 2];
+					Token delimiterSecond = (Token)tokens [i + 5];
+					if (delimiterSecond.getType () == "STRING DELIMITER") {
+						Token yarnSecondToken = (Token)tokens [i + 6];
+						answer = NumPatternOfOperations (yarnNextToken, yarnSecondToken, add);
+					} else {
+						answer = NumPatternOfOperations (yarnNextToken, delimiterSecond, add);
+					}
+				}else if (nextToken.getType () == "IDENTIFIER") { //SUM OF
+					if (secondToken.getType () == "STRING DELIMITER") {
+						Token yarnSecondToken = (Token)tokens [i + 4];
+						answer = NumPatternOfOperations (nextToken, yarnSecondToken, add);
+					} else {
+						answer = NumPatternOfOperations (nextToken, secondToken, add);
+					}
 
-					answer = NumPatternOfOperations (yarnNextToken, secondToken, add);
-				} else if (secondToken.getType () == "STRING DELIMITER") {
-					answer = NumPatternOfOperations (nextToken, yarnSecondToken, add);
-				} else if (secondToken.getType () == "STRING DELIMITER" && nextToken.getType () == "STRING DELIMITER"){
-					answer = NumPatternOfOperations (yarnNextToken, yarnSecondToken, add);
 				}else{
-					answer = NumPatternOfOperations (nextToken, secondToken, add);
+					if(secondToken.getType() == "STRING DELIMITER"){
+						Token yarnSecondToken = (Token)tokens [i + 4];
+						answer = NumPatternOfOperations (nextToken, yarnSecondToken, add);
+					}else{
+						answer = NumPatternOfOperations (nextToken, secondToken, add);
+					}
 				}
-
 				break;
 			} else if (token.getType () == sub) {
 				if (nextToken.getType () == "STRING DELIMITER") {
-					answer = NumPatternOfOperations (yarnNextToken, secondToken, sub);
-				} else if (secondToken.getType () == "STRING DELIMITER") {
-					answer = NumPatternOfOperations (nextToken, yarnSecondToken, sub);
-				} else if (secondToken.getType () == "STRING DELIMITER" && nextToken.getType () == "STRING DELIMITER"){
-					answer = NumPatternOfOperations (yarnNextToken, yarnSecondToken, sub);
-				}else{
+					Token yarnNextToken = (Token)tokens [i + 2];
+					Token delimiterSecond = (Token) tokens [i + 5];
+					if (delimiterSecond.getType () == "STRING DELIMITER") {
+						Token yarnSecondToken = (Token)tokens [i + 6];
+						answer = NumPatternOfOperations (yarnNextToken, yarnSecondToken, sub);
+					} else {
+						answer = NumPatternOfOperations (yarnNextToken, delimiterSecond, sub);
+					}
+				}else if (nextToken.getType () == "INTEGER LITERAL" && secondToken.getType() == "INTEGER LITERAL") {
 					answer = NumPatternOfOperations (nextToken, secondToken, sub);
-				}
+				}else if (nextToken.getType () == "IDENTIFIER") { //SUM OF
+					if (secondToken.getType () == "STRING DELIMITER") {
+						Token yarnSecondToken = (Token)tokens [i + 4];
+						answer = NumPatternOfOperations (nextToken, yarnSecondToken, sub);
+					} else {
+						answer = NumPatternOfOperations (nextToken, secondToken, sub);
+					}
 
+				}else{
+					if(secondToken.getType() == "STRING DELIMITER"){
+						Token yarnSecondToken = (Token)tokens [i + 4];
+						answer = NumPatternOfOperations (nextToken, yarnSecondToken, sub);
+					}else{
+						answer = NumPatternOfOperations (nextToken, secondToken, sub);
+					}
+				}
 				break;
 			} else if (token.getType () == mul) {
 				if (nextToken.getType () == "STRING DELIMITER") {
-					answer = NumPatternOfOperations (yarnNextToken, secondToken, mul);
-				} else if (secondToken.getType () == "STRING DELIMITER") {
-					answer = NumPatternOfOperations (nextToken, yarnSecondToken, mul);
-				} else if (secondToken.getType () == "STRING DELIMITER" && nextToken.getType () == "STRING DELIMITER"){
-					answer = NumPatternOfOperations (yarnNextToken, yarnSecondToken, mul);
-				}else{
+					Token yarnNextToken = (Token)tokens [i + 2];
+					Token delimiterSecond = (Token) tokens [i + 5];
+					if (delimiterSecond.getType () == "STRING DELIMITER") {
+						Token yarnSecondToken = (Token)tokens [i + 6];
+						answer = NumPatternOfOperations (yarnNextToken, yarnSecondToken, mul);
+					} else {
+						answer = NumPatternOfOperations (yarnNextToken, delimiterSecond, mul);
+					}
+				}else if (nextToken.getType () == "INTEGER LITERAL" && secondToken.getType() == "INTEGER LITERAL") {
 					answer = NumPatternOfOperations (nextToken, secondToken, mul);
+				}else if (nextToken.getType () == "IDENTIFIER") { //SUM OF
+					if (secondToken.getType () == "STRING DELIMITER") {
+						Token yarnSecondToken = (Token)tokens [i + 4];
+						answer = NumPatternOfOperations (nextToken, yarnSecondToken, mul);
+					} else {
+						answer = NumPatternOfOperations (nextToken, secondToken, mul);
+					}
 
-					break;
+				}else{
+					if(secondToken.getType() == "STRING DELIMITER"){
+						Token yarnSecondToken = (Token)tokens [i + 4];
+						answer = NumPatternOfOperations (nextToken, yarnSecondToken, mul);
+					}else{
+						answer = NumPatternOfOperations (nextToken, secondToken, mul);
+					}
 				}
+				break;
 			} else if (token.getType () == div) {
 				if (nextToken.getType () == "STRING DELIMITER") {
-					answer = NumPatternOfOperations (yarnNextToken, secondToken, div);
-				} else if (secondToken.getType () == "STRING DELIMITER") {
-					answer = NumPatternOfOperations (nextToken, yarnSecondToken, div);
-				} else if (secondToken.getType () == "STRING DELIMITER" && nextToken.getType () == "STRING DELIMITER"){
-					answer = NumPatternOfOperations (yarnNextToken, yarnSecondToken, div);
-				}else{
+					Token yarnNextToken = (Token)tokens [i + 2];
+					Token delimiterSecond = (Token) tokens [i + 5];
+					if (delimiterSecond.getType () == "STRING DELIMITER") {
+						Token yarnSecondToken = (Token)tokens [i + 6];
+						answer = NumPatternOfOperations (yarnNextToken, yarnSecondToken, div);
+					} else {
+						answer = NumPatternOfOperations (yarnNextToken, delimiterSecond, div);
+					}
+				}else if (nextToken.getType () == "INTEGER LITERAL" && secondToken.getType() == "INTEGER LITERAL") {
 					answer = NumPatternOfOperations (nextToken, secondToken, div);
-				}
+				}else if (nextToken.getType () == "IDENTIFIER") { //SUM OF
+					if (secondToken.getType () == "STRING DELIMITER") {
+						Token yarnSecondToken = (Token)tokens [i + 4];
+						answer = NumPatternOfOperations (nextToken, yarnSecondToken, div);
+					} else {
+						answer = NumPatternOfOperations (nextToken, secondToken, div);
+					}
 
+				}else{
+					if(secondToken.getType() == "STRING DELIMITER"){
+						Token yarnSecondToken = (Token)tokens [i + 4];
+						answer = NumPatternOfOperations (nextToken, yarnSecondToken, div);
+					}else{
+						answer = NumPatternOfOperations (nextToken, secondToken, div);
+					}
+				}
 				break;
+
 			} else if (token.getType () == mod) {
 				if (nextToken.getType () == "STRING DELIMITER") {
-					answer = NumPatternOfOperations (yarnNextToken, secondToken, mod);
-				} else if (secondToken.getType () == "STRING DELIMITER") {
-					answer = NumPatternOfOperations (nextToken, yarnSecondToken, mod);
-				} else if (secondToken.getType () == "STRING DELIMITER" && nextToken.getType () == "STRING DELIMITER"){
-					answer = NumPatternOfOperations (yarnNextToken, yarnSecondToken, div);
-				}else{
+					Token yarnNextToken = (Token)tokens [i + 2];
+					Token delimiterSecond = (Token) tokens [i + 5];
+					if (delimiterSecond.getType () == "STRING DELIMITER") {
+						Token yarnSecondToken = (Token)tokens [i + 6];
+						answer = NumPatternOfOperations (yarnNextToken, yarnSecondToken, mod);
+					} else {
+						answer = NumPatternOfOperations (yarnNextToken, delimiterSecond, mod);
+					}
+				}else if (nextToken.getType () == "INTEGER LITERAL" && secondToken.getType() == "INTEGER LITERAL") {
 					answer = NumPatternOfOperations (nextToken, secondToken, mod);
+				}else if (nextToken.getType () == "IDENTIFIER") { //SUM OF
+					if (secondToken.getType () == "STRING DELIMITER") {
+						Token yarnSecondToken = (Token)tokens [i + 4];
+						answer = NumPatternOfOperations (nextToken, yarnSecondToken, mod);
+					} else {
+						answer = NumPatternOfOperations (nextToken, secondToken, mod);
+					}
+
+				}else{
+					if(secondToken.getType() == "STRING DELIMITER"){
+						Token yarnSecondToken = (Token)tokens [i + 4];
+						answer = NumPatternOfOperations (nextToken, yarnSecondToken, mod);
+					}else{
+						answer = NumPatternOfOperations (nextToken, secondToken, mod);
+					}
 				}
 
 				break;
@@ -674,7 +1170,11 @@ public partial class MainWindow: Gtk.Window
 				}
 			}
 		}else{
-			num1 = Int32.Parse (first.getLexeme ());
+			try{
+				num1 = Int32.Parse (first.getLexeme ());
+			}
+			catch{
+			}
 			if (second.getType () == "IDENTIFIER") { //SUM OF 1 AN avar
 
 				for (int k = 0; k < symboltable.Count; k++) { //finds avar
@@ -687,7 +1187,7 @@ public partial class MainWindow: Gtk.Window
 							answer=NumOperationExecution (num1, num2, operation);
 						}catch{
 							Console.WriteLine ("error in function pattern of operations!");
-						
+
 						}
 					}
 				}
@@ -731,72 +1231,162 @@ public partial class MainWindow: Gtk.Window
 		string sub = "SUBTRACTION OPERATOR";
 		string mul = "MULTIPLICATION OPERATOR";
 		string div = "DIVISION OPERATOR";
-		string mod = "MODULO OPERATOR"; //ITZ SUM OF 1
+		string mod = "MODULO OPERATOR"; //ITZ SUM OF "1" AN "1"
+
+		Console.WriteLine ("ONE OF ME IS A DAMN FLOAT");
 		for (i = index + 1; i < tokens.Count; i++) { //check all tokens
 			Token token = (Token)tokens [i];
 			Token nextToken = (Token)tokens [i + 1];
 			Token secondToken = (Token)tokens [i + 3];
-			Token yarnNextToken = (Token)tokens [i + 2];
-			Token yarnSecondToken = (Token)tokens [i + 4];
 
 			Console.WriteLine ("INSIDE FLOAT EXECUTION " + token.getType());
 			if (token.getType () == add) {
-				if (nextToken.getType () == "STRING DELIMITER") {
-					answer = FloatPatternOfOperations (yarnNextToken, secondToken, add);
-				} else if (secondToken.getType () == "STRING DELIMITER") {
-					answer = FloatPatternOfOperations (nextToken, yarnSecondToken, add);
-				} else if (secondToken.getType () == "STRING DELIMITER" && nextToken.getType () == "STRING DELIMITER"){
-					answer = FloatPatternOfOperations (yarnNextToken, yarnSecondToken, add);
-				}else{
-					Console.WriteLine ("INSIDE IF" + nextToken.getLexeme () + " AND " + secondToken.getLexeme ());
+				if (nextToken.getType () == "STRING DELIMITER") { //
+					Token yarnNextToken = (Token)tokens [i + 2];
+					Token delimiterSecond = (Token) tokens [i + 5];
+					if (delimiterSecond.getType () == "STRING DELIMITER") {
+						Token yarnSecondToken = (Token)tokens [i + 6];
+						answer = FloatPatternOfOperations (yarnNextToken, yarnSecondToken, add);
+					} else {
+						answer = FloatPatternOfOperations (yarnNextToken, delimiterSecond, add);
+					}
+				}else if (nextToken.getType () == "DECIMAL LITERAL" || secondToken.getType() == "DECIMAL LITERAL") {
 					answer = FloatPatternOfOperations (nextToken, secondToken, add);
+				}else if (nextToken.getType () == "IDENTIFIER") {//SUM OF
+					if (secondToken.getType () == "STRING DELIMITER") {
+						Token yarnSecondToken = (Token)tokens [i + 4];
+						answer = FloatPatternOfOperations (nextToken, yarnSecondToken, add);
+					} else {
+						Console.WriteLine ("I KNOW IM AN IDENTIFIER");
+						answer = FloatPatternOfOperations (nextToken, secondToken, add);
+					}
+				}else{
+					if(secondToken.getType() == "STRING DELIMITER"){
+						Token yarnSecondToken = (Token)tokens [i + 4];
+						answer = FloatPatternOfOperations (nextToken, yarnSecondToken, add);
+					}else{ // P AN V
+						answer = FloatPatternOfOperations (nextToken, secondToken, add);
+					}
+
 				}
 				break;
 			} else if (token.getType () == sub) {
+
 				if (nextToken.getType () == "STRING DELIMITER") {
-					answer = FloatPatternOfOperations (yarnNextToken, secondToken, sub);
-				} else if (secondToken.getType () == "STRING DELIMITER") {
-					answer = FloatPatternOfOperations (nextToken, yarnSecondToken, sub);
-				} else if (secondToken.getType () == "STRING DELIMITER" && nextToken.getType () == "STRING DELIMITER"){
-					answer = FloatPatternOfOperations (yarnNextToken, yarnSecondToken, sub);
-				}else{
+					Token yarnNextToken = (Token)tokens [i + 2];
+					Token delimiterSecond = (Token) tokens [i + 5];
+					if (delimiterSecond.getType () == "STRING DELIMITER") {
+						Token yarnSecondToken = (Token)tokens [i + 6];
+						answer = FloatPatternOfOperations (yarnNextToken, yarnSecondToken, sub);
+					} else {
+						answer = FloatPatternOfOperations (yarnNextToken, delimiterSecond, sub);
+					}
+				}else if (nextToken.getType () == "DECIMAL LITERAL" || secondToken.getType() == "DECIMAL LITERAL") {
 					answer = FloatPatternOfOperations (nextToken, secondToken, sub);
+				}else if (nextToken.getType () == "IDENTIFIER") { //SUM OF
+					if (secondToken.getType () == "STRING DELIMITER") {
+						Token yarnSecondToken = (Token)tokens [i + 4];
+						answer = FloatPatternOfOperations (nextToken, yarnSecondToken, sub);
+					} else {
+						answer = FloatPatternOfOperations (nextToken, secondToken, sub);
+					}
+
+				}else{
+					if(secondToken.getType() == "STRING DELIMITER"){
+						Token yarnSecondToken = (Token)tokens [i + 4];
+						answer = FloatPatternOfOperations (nextToken, yarnSecondToken, sub);
+					}else{
+						answer = FloatPatternOfOperations (nextToken, secondToken, sub);
+					}
 				}
 
 				break;
 			} else if (token.getType () == mul) {
 				if (nextToken.getType () == "STRING DELIMITER") {
-					answer = FloatPatternOfOperations (yarnNextToken, secondToken, mul);
-				} else if (secondToken.getType () == "STRING DELIMITER") {
-					answer = FloatPatternOfOperations (nextToken, yarnSecondToken, mul);
-				} else if (secondToken.getType () == "STRING DELIMITER" && nextToken.getType () == "STRING DELIMITER"){
-					answer = FloatPatternOfOperations (yarnNextToken, yarnSecondToken, mul);
-				}else{
+					Token yarnNextToken = (Token)tokens [i + 2];
+					Token delimiterSecond = (Token) tokens [i + 5];
+					if (delimiterSecond.getType () == "STRING DELIMITER") {
+						Token yarnSecondToken = (Token)tokens [i + 6];
+						answer = FloatPatternOfOperations (yarnNextToken, yarnSecondToken, mul);
+					} else {
+						answer = FloatPatternOfOperations (yarnNextToken, delimiterSecond, mul);
+					}
+				}else if (nextToken.getType () == "DECIMAL LITERAL" || secondToken.getType() == "DECIMAL LITERAL") {
 					answer = FloatPatternOfOperations (nextToken, secondToken, mul);
+				}else if (nextToken.getType () == "IDENTIFIER") { //SUM OF
+					if (secondToken.getType () == "STRING DELIMITER") {
+						Token yarnSecondToken = (Token)tokens [i + 4];
+						answer = FloatPatternOfOperations (nextToken, yarnSecondToken, mul);
+					} else {
+						answer = FloatPatternOfOperations (nextToken, secondToken, mul);
+					}
 
-					break;
+				}else{
+					if(secondToken.getType() == "STRING DELIMITER"){
+						Token yarnSecondToken = (Token)tokens [i + 4];
+						answer = FloatPatternOfOperations (nextToken, yarnSecondToken, mul);
+					}else{
+						answer = FloatPatternOfOperations (nextToken, secondToken, mul);
+					}
 				}
+				break;
 			} else if (token.getType () == div) {
 				if (nextToken.getType () == "STRING DELIMITER") {
-					answer = FloatPatternOfOperations (yarnNextToken, secondToken, div);
-				} else if (secondToken.getType () == "STRING DELIMITER") {
-					answer = FloatPatternOfOperations (nextToken, yarnSecondToken, div);
-				} else if (secondToken.getType () == "STRING DELIMITER" && nextToken.getType () == "STRING DELIMITER"){
-					answer = FloatPatternOfOperations (yarnNextToken, yarnSecondToken, div);
-				}else{
+					Token yarnNextToken = (Token)tokens [i + 2];
+					Token delimiterSecond = (Token) tokens [i + 5];
+					if (delimiterSecond.getType () == "STRING DELIMITER") {
+						Token yarnSecondToken = (Token)tokens [i + 6];
+						answer = FloatPatternOfOperations (yarnNextToken, yarnSecondToken, div);
+					} else {
+						answer = FloatPatternOfOperations (yarnNextToken, delimiterSecond, div);
+					}
+				}else if (nextToken.getType () == "DECIMAL LITERAL" || secondToken.getType() == "DECIMAL LITERAL") {
 					answer = FloatPatternOfOperations (nextToken, secondToken, div);
+				}else if (nextToken.getType () == "IDENTIFIER") { //SUM OF
+					if (secondToken.getType () == "STRING DELIMITER") {
+						Token yarnSecondToken = (Token)tokens [i + 4];
+						answer = FloatPatternOfOperations (nextToken, yarnSecondToken, div);
+					} else {
+						answer = FloatPatternOfOperations (nextToken, secondToken, div);
+					}
+
+				}else{
+					if(secondToken.getType() == "STRING DELIMITER"){
+						Token yarnSecondToken = (Token)tokens [i + 4];
+						answer = FloatPatternOfOperations (nextToken, yarnSecondToken, div);
+					}else{
+						answer = FloatPatternOfOperations (nextToken, secondToken, div);
+					}
 				}
 
 				break;
 			} else if (token.getType () == mod) {
 				if (nextToken.getType () == "STRING DELIMITER") {
-					answer = FloatPatternOfOperations (yarnNextToken, secondToken, mod);
-				} else if (secondToken.getType () == "STRING DELIMITER") {
-					answer = FloatPatternOfOperations (nextToken, yarnSecondToken, mod);
-				} else if (secondToken.getType () == "STRING DELIMITER" && nextToken.getType () == "STRING DELIMITER"){
-					answer = FloatPatternOfOperations (yarnNextToken, yarnSecondToken, div);
-				}else{
+					Token yarnNextToken = (Token)tokens [i + 2];
+					Token delimiterSecond = (Token) tokens [i + 5];
+					if (delimiterSecond.getType () == "STRING DELIMITER") {
+						Token yarnSecondToken = (Token)tokens [i + 6];
+						answer = FloatPatternOfOperations (yarnNextToken, yarnSecondToken, mod);
+					} else {
+						answer = FloatPatternOfOperations (yarnNextToken, delimiterSecond, mod);
+					}
+				}else if (nextToken.getType () == "DECIMAL LITERAL" || secondToken.getType() == "DECIMAL LITERAL") {
 					answer = FloatPatternOfOperations (nextToken, secondToken, mod);
+				}else if (nextToken.getType () == "IDENTIFIER") { //SUM OF
+					if (secondToken.getType () == "STRING DELIMITER") {
+						Token yarnSecondToken = (Token)tokens [i + 4];
+						answer = FloatPatternOfOperations (nextToken, yarnSecondToken, mod);
+					} else {
+						answer = FloatPatternOfOperations (nextToken, secondToken, mod);
+					}
+
+				}else{
+					if(secondToken.getType() == "STRING DELIMITER"){
+						Token yarnSecondToken = (Token)tokens [i + 4];
+						answer = FloatPatternOfOperations (nextToken, yarnSecondToken, mod);
+					}else{
+						answer = FloatPatternOfOperations (nextToken, secondToken, mod);
+					}
 				}
 
 				break;
@@ -814,35 +1404,46 @@ public partial class MainWindow: Gtk.Window
 			for (int j = 0; j < symboltable.Count; j++) {
 				Symbol symbol = (Symbol)symboltable [j];
 				if (symbol.GetIdentifier () == first.getLexeme ()) {
-					if(symbol.GetType() == "NUMBR"){ //SUM OF NUM AN 1.5
-						try{
+					if(symbol.GetType() == "NUMBR"){ //WHAT IF STRING
+						try{ // 1 AN 1.3
 							num1 = Single.Parse(symbol.GetValue ());
 							float2 = Single.Parse (second.getLexeme ());
 							answer=FloatOperationExecution (num1, float2, operation);
 						}catch{
 							Console.WriteLine ("error in function pattern of operations!");
 						}
-					}
-				}else{
-					try{
-						float1 = Single.Parse(symbol.GetValue ());
-					}catch{
-						Console.WriteLine ("error in function pattern of operations!");
-					}
-
-					if(second.getType() == "INTEGER LITERAL"){ //SUM OF FLT AN 1
+					}else{
 						try{
-							num2 = Single.Parse (second.getLexeme ());
-							answer=FloatOperationExecution ( float1, num2, operation);
+							float1 = Single.Parse(symbol.GetValue ());
 						}catch{
 							Console.WriteLine ("error in function pattern of operations!");
 						}
-					}else{ //SUM OF FLT AN 1.5
-						try{
-							float2 = Single.Parse (second.getLexeme ());
-							answer=FloatOperationExecution (float1, float2, operation);
-						}catch{
-							Console.WriteLine ("error in function pattern of operations!");
+
+						if(second.getType() == "INTEGER LITERAL"){ //SUM OF FLT AN 1
+							try{
+								num2 = Single.Parse (second.getLexeme ());
+								answer=FloatOperationExecution ( float1, num2, operation);
+							}catch{
+								Console.WriteLine ("error in function pattern of operations!");
+							}
+						}else if(second.getType() == "IDENTIFIER"){ //SUM OF FLT AN 1.5
+							for (int k = 0; k < symboltable.Count; k++) {
+								Symbol symbol2 = (Symbol)symboltable [k];
+								if (symbol2.GetIdentifier () == first.getLexeme ()) {
+									try{
+										float1 = Single.Parse(symbol2.GetValue ());
+									}catch{
+										Console.WriteLine ("error in function pattern of operations!");
+									}
+								}
+							}
+						}else{
+							try{
+								float2 = Single.Parse (second.getLexeme ());
+								answer=FloatOperationExecution (float1, float2, operation);
+							}catch{
+								Console.WriteLine ("error in function pattern of operations!");
+							}
 						}
 					}
 				}
@@ -893,20 +1494,11 @@ public partial class MainWindow: Gtk.Window
 					for (int k = 0; k< symboltable.Count; k++) {
 						Symbol symbol2 = (Symbol)symboltable [k];
 						if(symbol2.GetIdentifier() == second.getLexeme()){
-							if(second.getType() == "INTEGER LITERAL"){ //SUM OF 1.5 AN NUM
-								try{
-									num1 = Single.Parse(second.getLexeme ());
-									answer=FloatOperationExecution (num1, float2, operation);
-								}catch{
-									Console.WriteLine ("error in function pattern of operations!");
-								}
-							}else{//SUM OF 1.5 AN FLT
-								try{
-									float1 = Single.Parse (second.getLexeme ());
-									answer=FloatOperationExecution (float1, float2, operation);
-								}catch{
-									Console.WriteLine ("error in function pattern of operations!");
-								}
+							try{
+								float1 = Single.Parse (second.getLexeme ());
+								answer=FloatOperationExecution (float1, float2, operation);
+							}catch{
+								Console.WriteLine ("error in function pattern of operations!");
 							}
 						}
 					}
@@ -944,10 +1536,10 @@ public partial class MainWindow: Gtk.Window
 		}
 		return answer;
 	}
+// HERE ========================================================================================================================================================================================
 
-//--- THIS LINE
 	public int syntaxchecker(string text, ref int oicneeded, ref int insideorly, ref int insidewtf, ref int mustyarly, ref int symboltablesize, ref Boolean run, ref string condition){
-//--- TO THIS LINE
+		//--- TO THIS LINE
 		int currentword = -1;
 		string[] words;
 		words = text.Split (default(string[]), StringSplitOptions.RemoveEmptyEntries);
@@ -968,9 +1560,9 @@ public partial class MainWindow: Gtk.Window
 		Regex rgx14;
 		Regex rgx15;
 		Regex rgx16;
-//--- THIS LINE
+		//--- THIS LINE
 		Regex rgx17;
-//--- TO THIS LINE
+		//--- TO THIS LINE
 		int next = 0; //  0=end  1=sum,diff..etc 2=identifier
 		int commandwait = 0;
 		int anreq = 0;
@@ -1005,9 +1597,9 @@ public partial class MainWindow: Gtk.Window
 			rgx14 = new Regex(@"^(NUMBR|NUMBAR|TROOF|YARN|NOOB)$");
 			rgx15 = new Regex(@"^(R)$");
 			rgx16 = new Regex(@"^(BTW)$");
-//--- THIS LINE
+			//--- THIS LINE
 			rgx17 = new Regex(@"^(WTF\?|OMG|OMGWTF|GTFO)$");
-//--- TO THIS LINE
+			//--- TO THIS LINE
 			currentword++;
 
 			if( currentword >= words.Length){
@@ -1066,16 +1658,16 @@ public partial class MainWindow: Gtk.Window
 			else if(rgx16.IsMatch(word)){
 				break;
 			}
-		
+
 			else if(rgx.IsMatch(word)){
-//--- THIS LINE
+				//--- THIS LINE
 				if (text.Contains ("VISIBLE ")) { //removes VISIBLE
 					int i = text.IndexOf("VISIBLE ") + 8;
 					condition = text.Substring (i);
 				} else {
 					condition = text;
 				}
-//--- TO THIS LINE
+				//--- TO THIS LINE
 				if(words [currentword].Equals ("DIFFRINT", StringComparison.Ordinal)){
 					compareon = 1;
 					commandwait = 2;
@@ -1150,7 +1742,7 @@ public partial class MainWindow: Gtk.Window
 					continue;
 				}
 			}
-//--- THIS LINE
+			//--- THIS LINE
 			else  if(rgx17.IsMatch(word) && words.Length <= 2) {
 				//WTF? OMG ____ OMG ____ OMGWTF OIC
 				if (words [currentword].Equals ("OMG", StringComparison.Ordinal) && words.Length < 2) {return 1;}
@@ -1170,7 +1762,7 @@ public partial class MainWindow: Gtk.Window
 				}
 				return 0;
 			}
-//--- TOO THIS LINE
+			//--- TOO THIS LINE
 			else if(rgx3.IsMatch(word) && anreq == 1){
 				anreq = 0;
 				if(words.Length == currentword + 1){
@@ -1302,9 +1894,9 @@ public partial class MainWindow: Gtk.Window
 					smooshprintonly = 1;
 				}
 				else if(word.Equals ("OIC", StringComparison.Ordinal)){
-//--- THIS LINE
+					//--- THIS LINE
 					if(insideorly == 0 && insidewtf == 0){
-//--- TO THIS LINE
+						//--- TO THIS LINE
 						return 1;
 					}
 					else if(mustyarly == 1){
@@ -1320,7 +1912,7 @@ public partial class MainWindow: Gtk.Window
 				}
 				continue;
 			}
-//--- FROM THIS LINE
+			//--- FROM THIS LINE
 			else if(rgx6.IsMatch(word)){
 				if (word.Equals ("NOT", StringComparison.Ordinal)) {
 					if (text.Contains ("VISIBLE ")) { //removes VISIBLE
@@ -1334,7 +1926,7 @@ public partial class MainWindow: Gtk.Window
 				next = 2;
 				continue;
 			}
-//--- TO THIS LINE
+			//--- TO THIS LINE
 			else if (word.StartsWith ("\"")) {
 				//Console.WriteLine ("String Prompt1");
 				currentword++;
@@ -1807,7 +2399,7 @@ public partial class MainWindow: Gtk.Window
 			repstring = "";
 		}
 
-//--- THIS LINE
+
 		mc = Regex.Matches(text, @"^(OMGWTF)$");
 		foreach (Match m in mc){
 			//Console.WriteLine(m + "  KEYWORD");
@@ -1818,7 +2410,7 @@ public partial class MainWindow: Gtk.Window
 			text = Replace (text, repstring, "");
 			repstring = "";
 		}
-//--- TO THIS LINE
+
 		mc = Regex.Matches(text, @"^(IM IN YR)$");
 		foreach (Match m in mc){
 			//Console.WriteLine(m + "  KEYWORD");
@@ -2027,18 +2619,35 @@ public partial class MainWindow: Gtk.Window
 
 			if (!keyword) {
 				if (word2.StartsWith ("\"") && word2.EndsWith ("\"")) {
+					int numberofquotes = 0;
+					MatchCollection quotes = Regex.Matches(text, @"""");
+					foreach (Match quote in quotes){
+						numberofquotes++;
+					}
+					if(numberofquotes > 2 || numberofquotes < 2){
+						return text;
+					}
+
+
+					try{
+						text = Replace (text, "\"", "");// to remove quotes
+						text = Replace (text, "\"", "");// to remove quotes
+					}
+					catch{
+						Console.WriteLine ("error during quote removal");
+					}
+
+					repstring = text;
 					textview5.Buffer.Text += "\"\n";
 					textview6.Buffer.Text += "STRING DELIMITER OPERATOR\n";
 					tokens.Add (new Token("\"", "STRING DELIMITER"));
-					textview5.Buffer.Text += m + "\n";
+					textview5.Buffer.Text += text + "\n";
 					textview6.Buffer.Text += "STRING LITERAL\n";
 					tokens.Add (new Token(text, "STRING LITERAL"));
 					textview5.Buffer.Text += "\"\n";
 					textview6.Buffer.Text += "STRING DELIMITER OPERATOR\n";
 					tokens.Add (new Token("\"", "STRING DELIMITER"));
-					repstring += m;
 					text = Replace (text, repstring, "");
-					//Console.WriteLine ("text is " + text);
 					repstring = "";
 				}
 				else if (!(word2.StartsWith("\"")) && !(word2.EndsWith("\""))){
@@ -2058,6 +2667,25 @@ public partial class MainWindow: Gtk.Window
 		}
 
 		if(text.StartsWith("\"") && text.EndsWith("\"")){
+			int numberofquotes = 0;
+			MatchCollection quotes = Regex.Matches(text, @"""");
+			foreach (Match quote in quotes){
+				numberofquotes++;
+			}
+			if(numberofquotes > 2 || numberofquotes < 2){
+				return text;
+			}
+			try{
+				text = Replace (text, "\"", "");// to remove quotes
+				text = Replace (text, "\"", "");// to remove quotes
+			}
+			catch{
+				Console.WriteLine ("error during quote removal");
+			}
+
+
+			repstring = text;
+
 			textview5.Buffer.Text += "\"\n";
 			textview6.Buffer.Text += "STRING DELIMITER OPERATOR\n";
 			tokens.Add (new Token("\"", "STRING DELIMITER"));
@@ -2067,7 +2695,6 @@ public partial class MainWindow: Gtk.Window
 			textview5.Buffer.Text += "\"\n";
 			textview6.Buffer.Text += "STRING DELIMITER OPERATOR\n";
 			tokens.Add (new Token("\"", "STRING DELIMITER"));
-			repstring += text;
 			text = Replace (text, repstring, "");
 			repstring = "";
 		}
@@ -2141,10 +2768,8 @@ public partial class MainWindow: Gtk.Window
 		return true;
 
 	}
-
-
-//--- YOU KNOW WHAT JUST COPY PASTE EVERYTHING FROM HERE
-//--- as in lahat
+	//--- YOU KNOW WHAT JUST COPY PASTE EVERYTHING FROM HERE
+	//--- as in lahat
 
 	//for things such as VISIBLE NOT WIN
 	// 5.00 == 5 gagamitin ko as default yung setFloat
@@ -2166,7 +2791,7 @@ public partial class MainWindow: Gtk.Window
 		CreatePseudo ();
 
 		if(words.Length == 5){
-//--- THIS IF FUNCTION			//for BOTH SAEM x AN y
+			//--- THIS IF FUNCTION			//for BOTH SAEM x AN y
 			if(words[0].Equals("BOTH", StringComparison.Ordinal) && words[1].Equals("SAEM", StringComparison.Ordinal) && words[3].Equals("AN", StringComparison.Ordinal)) {
 				if (words [2].StartsWith ("\"") && words [2].EndsWith ("\"")) { //means inside "" obv not an identifier
 					words [2] = words [2].Substring (1); //removes first quotation mark
@@ -2200,7 +2825,7 @@ public partial class MainWindow: Gtk.Window
 						temp7 = words [2];
 					}
 				}
-					
+
 				if (words [4].StartsWith ("\"") && words [4].EndsWith ("\"")) { //means inside "" obv not an identifier
 					words [4] = words [4].Substring (1); //removes first quotation mark
 					words [4] = words [4].Remove (words [4].Length - 1); //removes last quotation mark
@@ -2233,7 +2858,7 @@ public partial class MainWindow: Gtk.Window
 						temp8 = words [4];
 					}
 				}
-					
+
 				if (temp1 == temp2 && temp3 == temp4 && temp7.Equals (temp8, StringComparison.Ordinal)) {
 					it.setValue(true);
 				} else {
@@ -2306,7 +2931,7 @@ public partial class MainWindow: Gtk.Window
 				}
 			}
 
-//--- THIS WHOLE IF FUNCTION		//for BIGGR OF x AN y
+			//--- THIS WHOLE IF FUNCTION		//for BIGGR OF x AN y
 			if(words[0].Equals("BIGGR", StringComparison.Ordinal) && words[1].Equals("OF", StringComparison.Ordinal) && words[3].Equals("AN", StringComparison.Ordinal)) {
 				if (IsDigitsOnly (words [2])) { 
 					float.TryParse (words [2], out temp1);  //tries to convert to float
@@ -2336,7 +2961,7 @@ public partial class MainWindow: Gtk.Window
 					it.setFloatNum(temp2);
 				}
 			}
-//--- THIS WHOLE IF			//FOR SMALLR OF x AN y
+			//--- THIS WHOLE IF			//FOR SMALLR OF x AN y
 			if(words[0].Equals("SMALLR", StringComparison.Ordinal) && words[1].Equals("OF", StringComparison.Ordinal) && words[3].Equals("AN", StringComparison.Ordinal)) {
 				if (IsDigitsOnly (words [2])) { 
 					float.TryParse (words [2], out temp1);  //tries to convert to float
@@ -2380,7 +3005,7 @@ public partial class MainWindow: Gtk.Window
 		}
 
 		if (words.Length == 4) {
-///THIS IF FUNCTION			//for DIFFRINT x AN y
+			///THIS IF FUNCTION			//for DIFFRINT x AN y
 			if(words[0].Equals("DIFFRINT", StringComparison.Ordinal) && words[2].Equals("AN", StringComparison.Ordinal)) {
 				if (words [1].StartsWith ("\"") && words [1].EndsWith ("\"")) { //means inside "" obv not an identifier
 					words [1] = words [1].Substring (1); //removes first quotation mark
@@ -2554,7 +3179,7 @@ public partial class MainWindow: Gtk.Window
 		return true;
 	}
 
-//--- THIS WHOLE FUNCTION
+	//--- THIS WHOLE FUNCTION
 	public void omgmatch(string text, ref bool omgfound){
 		Regex yarn = new Regex(@"""?[A-Za-z](_*\d*[A-Za-z]*)*""?");
 		Regex troof = new Regex(@"^(WIN|FAIL)$");

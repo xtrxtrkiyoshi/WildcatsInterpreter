@@ -50,8 +50,6 @@ public partial class MainWindow
 	private global::Gtk.TextView textview9;
 	
 	private global::Gtk.Label label6;
-	
-	private global::Gtk.FileChooserButton filechooserbutton1;
 
 	protected virtual void Build ()
 	{
@@ -275,14 +273,6 @@ public partial class MainWindow
 		global::Gtk.Fixed.FixedChild w29 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.label6]));
 		w29.X = 33;
 		w29.Y = 369;
-		// Container child fixed1.Gtk.Fixed+FixedChild
-		this.filechooserbutton1 = new global::Gtk.FileChooserButton (global::Mono.Unix.Catalog.GetString ("Select a File"), ((global::Gtk.FileChooserAction)(0)));
-		this.filechooserbutton1.WidthRequest = 100;
-		this.filechooserbutton1.Name = "filechooserbutton1";
-		this.fixed1.Add (this.filechooserbutton1);
-		global::Gtk.Fixed.FixedChild w30 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.filechooserbutton1]));
-		w30.X = 236;
-		w30.Y = 20;
 		this.Add (this.fixed1);
 		if ((this.Child != null)) {
 			this.Child.ShowAll ();

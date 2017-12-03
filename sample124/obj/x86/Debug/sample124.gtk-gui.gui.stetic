@@ -309,16 +309,6 @@
             <property name="Y">369</property>
           </packing>
         </child>
-        <child>
-          <widget class="Gtk.FileChooserButton" id="filechooserbutton1">
-            <property name="MemberName" />
-            <property name="WidthRequest">100</property>
-          </widget>
-          <packing>
-            <property name="X">236</property>
-            <property name="Y">20</property>
-          </packing>
-        </child>
       </widget>
     </child>
   </widget>

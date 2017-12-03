@@ -4,6 +4,7 @@ using System.Collections;
 
 namespace sample124
 {
+
 	public class ExpectationTable
 	{
 		//const string ANYOF = "INFINITE ARITY OR OPERATOR";
@@ -61,7 +62,7 @@ namespace sample124
 
 		const string WTF = "SWITCH START KEYWORD";
 		const string OMG = "SWITCH CASE KEYWORD";
-//---		//const string OMGWTF = "SWITCH DEFAULT KEYWORD";
+		//const string OMGWTF = "SWITCH DEFAULT KEYWORD";
 
 		const string OIC = "END CONDITION KEYWORD";
 
@@ -78,7 +79,7 @@ namespace sample124
 			{ NUMBAR, NUMBER },
 			{ NUMBR, NUMBER },
 			{ BOOLEAN, BOOLEAN },
-			{ YARN, STRING },
+			{ YARN, YARN },
 
 			{STRINGDELIMITER, STRINGDELIMITER},
 
@@ -100,7 +101,7 @@ namespace sample124
 
 			{ WTF, WTF },
 			{ OMG, OMG },
-//---			//{ OMGWTF, OMGWTF },
+			//{ OMGWTF, OMGWTF },
 
 			{ ORLY, ORLY },
 			{ YARLY, YARLY },
@@ -139,27 +140,28 @@ namespace sample124
 		static ExpectationTable(){
 			//table.Add ("CONCNATENATION OPERATOR", new ArrayList{STRING, AN, STRING.. MKAY });
 			table.Add ("ASSIGNMENT OPERATOR", new ArrayList{
-				new ArrayList{ YARN, BOOLEAN, NUMBER, STRINGDELIMITER, STRING }
+				new ArrayList{ YARN, BOOLEAN, NUMBER}
 			}); //
 			table.Add ("VARIABLE DECLARATION KEYWORD", new ArrayList{IDENTIFIER}); //identifier
 			table.Add ("ITZ KEYWORD", new ArrayList{
-				new ArrayList{ STRINGDELIMITER, BOOLEAN, NUMBER, YARN, STRING}
+				new ArrayList{STRINGDELIMITER, BOOLEAN, NUMBER, YARN, STRING}
 			});
 
 			table.Add ("SYSTEM INPUT KEYWORD", new ArrayList{IDENTIFIER}); //problem
 			table.Add ("SYSTEM OUTPUT KEYWORD", new ArrayList{
-				new ArrayList{ NUMBER, BOOLEAN, STRING, STRINGDELIMITER, IDENTIFIER}
+				new ArrayList{ NUMBER, BOOLEAN, STRING, STRINGDELIMITER, IDENTIFIER, YARN}
 			}); //problem
 
 			table.Add ("SWITCH CASE KEYWORD", new ArrayList{
-				new ArrayList{ BOOLEAN, NUMBER,  STRINGDELIMITER }
+				new ArrayList{ BOOLEAN, NUMBER,  YARN }
 			}); // expect value literal
-//---			//table.Add ("SWITCH DEFAULT KEYWORD", new ArrayList{NUMBER}); // 
+			//table.Add ("SWITCH DEFAULT KEYWORD", new ArrayList{NUMBER}); // 
 
 			//table.Add ("END CONDITION KEYWORD", new ArrayList{NUMBER});
 		
 			table.Add ("INCREMENT OPERATOR", new ArrayList{NUMBER});
 			table.Add ("DECREMENT OPERATOR", new ArrayList{NUMBER});
+			//CHANGED FROM HERE ================================================================================================================================
 
 			table.Add ("ADDITION OPERATOR", new ArrayList{new ArrayList{YARN, NUMBER, IDENTIFIER} , AN, new ArrayList{YARN, NUMBER, IDENTIFIER} });
 			table.Add ("SUBTRACTION OPERATOR", new ArrayList{new ArrayList{YARN, NUMBER, IDENTIFIER} , AN, new ArrayList{YARN, NUMBER, IDENTIFIER} });
@@ -167,8 +169,7 @@ namespace sample124
 			table.Add ("DIVISION OPERATOR", new ArrayList{new ArrayList{YARN, NUMBER, IDENTIFIER} , AN, new ArrayList{YARN, NUMBER, IDENTIFIER} });
 			table.Add ("MODULO OPERATOR", new ArrayList{new ArrayList{YARN, NUMBER, IDENTIFIER} , AN, new ArrayList{YARN, NUMBER, IDENTIFIER} });
 
-//---- EVERYTHING BELOW THIS LINE
-
+			// TO HERE ========================================================================================================================================
 			table.Add ("MAX OPERATOR", new ArrayList{new ArrayList{ STRING, NUMBER, IDENTIFIER} , AN, new ArrayList{ STRING, NUMBER, IDENTIFIER} });
 			table.Add ("MIN OPERATOR", new ArrayList{new ArrayList{ STRING, NUMBER, IDENTIFIER} , AN, new ArrayList{ STRING, NUMBER, IDENTIFIER} });
 			table.Add ("NOT EQUAL OPERATOR",  new ArrayList{new ArrayList{ STRING, NUMBER, IDENTIFIER, BOOLEAN} , AN, new ArrayList{ STRING, NUMBER, IDENTIFIER, BOOLEAN} });
